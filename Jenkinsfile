@@ -58,7 +58,7 @@ pipeline {
                
                 sh """
                     kubectl apply -f deployment.yaml
-                    sleep 
+                    sleep 120
                     kubectl get pods
                 """
                 

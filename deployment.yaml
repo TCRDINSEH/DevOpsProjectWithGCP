@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-gunicorn-app
+  labels:
+    app: python-gunicorn-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: python-gunicorn-app
+  template:
+    metadata:
+      labels:
+        app: python-gunicorn-app
+    spec:
+      containers:
+        - name: python-gunicorn-app
+          image: us-central1-docker.pkg.dev/applied-pager-476808-j5/pythonapp/python-app:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: PORT
+              value: "80"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10

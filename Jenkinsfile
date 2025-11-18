@@ -55,20 +55,13 @@ pipeline {
 
         stage('Deploy to GKE') {
             steps {
-                // 1. Initial Deployment (If deployment.yaml is present)
-                // This ensures the deployment exists on the *first* run.
-                sh "if ! kubectl get deployment ${DEPLOYMENT_NAME}; then kubectl apply -f deployment.yaml; fi"
-
-                // 2. Rolling Update
-                // CORRECTION: Use the dynamic ${IMAGE} environment variable.
-                // CORRECTION: Use the CONTAINER_NAME from the environment block.
+               
                 sh """
-                    echo "🚀 Rolling update deployment ${DEPLOYMENT_NAME} with new image ${IMAGE}"
-                    kubectl set image deployment/${DEPLOYMENT_NAME} \
-                    ${CONTAINER_NAME}=${IMAGE}
+                    kubectl apply -f deployment.yaml
+                    sleep 
+                    kubectl get pods
                 """
-                // OPTIONAL: Wait for the rollout to complete
-                sh "kubectl rollout status deployment/${DEPLOYMENT_NAME}"
+                
             }
         }
     }
